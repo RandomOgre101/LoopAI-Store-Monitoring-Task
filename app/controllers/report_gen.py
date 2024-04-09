@@ -58,7 +58,9 @@ def get_last_hour_data(db: Session, sid: int):
         else:
             i += 1
     
-    if ((i+1) < len(latest_time_data) and latest_time_data[i+1]['timestamp_utc'].day == latest_time_data[i]['timestamp_utc'].day):
+    if ((i+1) < len(latest_time_data) and 
+        latest_time_data[i+1]['timestamp_utc'].day == latest_time_data[i]['timestamp_utc'].day and
+        latest_time_data[i+1]['timestamp_utc'].hour == latest_time_data[i]['timestamp_utc'].hour - 1):
         prev_hour_data: list = [tdc.convert_timestamp_timezone(latest_time_data[i+1]['timestamp_utc'], 'UTC', store_timezone), latest_time_data[i+1]['status']]
     else:
         prev_hour_data = None
@@ -172,22 +174,39 @@ def get_last_day_data(db: Session, sid: int):
         if local_start_time <= converted_time <= local_end_time:
             valid_timestamps_on_latest_day.append([converted_time, data['status']])
     
-    
+    print(len(valid_timestamps_on_latest_day))
     index = 0
-    start_hour, start_minute = local_start_time.split(":")[0], local_start_time.split(":")[1]
-    end_hour, end_minute = local_end_time.split(":")[0], local_end_time.split(":")[1]
-    
+    start_hour, start_minute = int(local_start_time.split(":")[0]), int(local_start_time.split(":")[1])
+    end_hour, end_minute = int(local_end_time.split(":")[0]), int(local_end_time.split(":")[1])
+    uptime, downtime = 0, 0
+
     while index < ( len(valid_timestamps_on_latest_day) -1 ):
 
-        hour_1 = valid_timestamps_on_latest_day[index][0].split(":")[0]
-        hour_2 = valid_timestamps_on_latest_day[index+1][0].split(":")[0]
+        hour_1 = int(valid_timestamps_on_latest_day[index][0].split(":")[0])
+        hour_2 = int(valid_timestamps_on_latest_day[index+1][0].split(":")[0])
 
-        minute_1 = valid_timestamps_on_latest_day[index][0].split(":")[1]
-        minute_2 = valid_timestamps_on_latest_day[index+1][0].split(":")[1]
+        minute_1 = int(valid_timestamps_on_latest_day[index][0].split(":")[1])
+        minute_2 = int(valid_timestamps_on_latest_day[index+1][0].split(":")[1])
 
         status_1 = valid_timestamps_on_latest_day[index][1]
         status_2 = valid_timestamps_on_latest_day[index+1][1]
 
-        print([start_hour, end_hour, hour_1, hour_2, minute_1, minute_2, status_1, status_2])
+        if index == 0:
+            is_start = True
+        else:
+            is_start = False
+
+        up, dwn = tdc.calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute, hour_1, hour_2, minute_1, minute_2, status_1, status_2, is_start)
+        uptime += up
+        downtime += dwn
+
         index += 1
-        
+
+    print(uptime, downtime)
+    
+    if (uptime + downtime)/60 == (end_hour - start_hour) or int((uptime + downtime)/60) == 24:
+        return uptime, downtime
+    elif end_hour - start_hour == 23:
+        return uptime, downtime + int(( 24 - (uptime + downtime)/60 )*60)
+    else:
+        return uptime, downtime + int(( (end_hour - start_hour) - (uptime + downtime)/60 )*60)
