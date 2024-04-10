@@ -14,8 +14,8 @@ def convert_timestamp_timezone(timestamp, current_timezone, target_timezone):
 
 
 def calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute, 
-                                       hour_1, hour_2, minute_1, minute_2, status_1, status_2, 
-                                       is_start):
+                                hour_1, hour_2, minute_1, minute_2, status_1, status_2, 
+                                is_start):
     uptime: int = 0
     downtime: int = 0
 
@@ -63,7 +63,7 @@ def calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute,
                 
                 else:
                     downtime += 60
-        
+
     return uptime, downtime
 
 

@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 from ..DB import models
 from ..schemas import schemas
 from ..controllers import report_gen
+from ..controllers.report_gen import ReportGen
 from fastapi.responses import StreamingResponse
 import csv
 import io
-from ..controllers import time_and_date_calcs as tdc
-import asyncio
+
 
 
 
@@ -19,20 +19,31 @@ router = APIRouter(
 
 report_status = {}
 
-import random
+
 @router.get("/trigger_report/{sid}")
 async def trigger_creation_of_report(sid: int, db: Session = Depends(get_db)):
-
+    
+    
     store_ids_query = db.query(models.StoreStatus.store_id).distinct().all()
     list_of_store_ids = {sid[0] for sid in store_ids_query}
     
-    # for sid in list_of_store_ids:
-    #     last_hour_uptime, last_hour_downtime = await report_gen.get_last_hour_data(db, sid)
-    #     last_day_uptime, last_day_downtime = await report_gen.get_last_day_data(db, sid)
-    
+    i = 0
+    for ssid in list_of_store_ids:
+        rg = ReportGen(ssid, db)
+        last_hour_uptime, last_hour_downtime = await rg.get_last_hour_data()
+        last_day_uptime, last_day_downtime = await rg.get_last_day_data()
+        last_week_uptime, last_week_downtime = await rg.get_last_week_data()
+        print(f'ITERATION {i} DONE')
+        i += 1
 
     return None
-    # return {'store_id': sid, "uptime": last_day_uptime, "downtime": last_day_downtime}
+    # return {
+    #     'store_id': sid,
+    #     'last_hour_uptime': last_hour_uptime, 'last_hour_downtime': last_hour_downtime,
+    #     'last_day_uptime': last_day_uptime, 'last_day_downtime': last_day_downtime,
+    #     'last_week_uptime': last_week_uptime, 'last_week_downtime': last_week_downtime
+    #     }
+
 
 
 
