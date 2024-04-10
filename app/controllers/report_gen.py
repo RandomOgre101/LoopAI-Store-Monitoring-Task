@@ -174,7 +174,6 @@ def get_last_day_data(db: Session, sid: int):
         if local_start_time <= converted_time <= local_end_time:
             valid_timestamps_on_latest_day.append([converted_time, data['status']])
     
-    print(len(valid_timestamps_on_latest_day))
     index = 0
     start_hour, start_minute = int(local_start_time.split(":")[0]), int(local_start_time.split(":")[1])
     end_hour, end_minute = int(local_end_time.split(":")[0]), int(local_end_time.split(":")[1])
@@ -202,7 +201,6 @@ def get_last_day_data(db: Session, sid: int):
 
         index += 1
 
-    print(uptime, downtime)
     
     if (uptime + downtime)/60 == (end_hour - start_hour) or int((uptime + downtime)/60) == 24:
         return uptime, downtime

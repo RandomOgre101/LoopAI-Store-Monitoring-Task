@@ -19,6 +19,20 @@ def calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute,
     uptime: int = 0
     downtime: int = 0
 
+    if hour_1 == hour_2:
+        if ((status_1 == 'active' and status_2 == 'active') or
+            (status_1 == 'inactive' and status_2 == 'inactive')
+            ):
+            return uptime, downtime
+        
+        elif (status_1 == 'inactive' and status_2 == 'active'
+              ):
+            return uptime, downtime + minute_2
+        
+        elif (status_1 == 'active' and status_2 == 'inactive' 
+              ):
+            return uptime + minute_2, downtime
+
     if is_start:
         if status_1 == 'active':
             uptime += 60
@@ -31,8 +45,8 @@ def calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute,
         
         else:
             if minute_1 < minute_2:
-                if (status_1 == 'active' and status_2 == 'active' or
-                    status_1 == 'active' and status_2 == 'inactive'
+                if ((status_1 == 'active' and status_2 == 'active') or
+                    (status_1 == 'active' and status_2 == 'inactive')
                     ):
                     uptime += 60
                 

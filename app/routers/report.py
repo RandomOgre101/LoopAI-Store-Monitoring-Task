@@ -7,6 +7,9 @@ from ..controllers import report_gen
 from fastapi.responses import StreamingResponse
 import csv
 import io
+from ..controllers import time_and_date_calcs as tdc
+import asyncio
+
 
 
 router = APIRouter(
@@ -22,15 +25,14 @@ async def trigger_creation_of_report(sid: int, db: Session = Depends(get_db)):
 
     store_ids_query = db.query(models.StoreStatus.store_id).distinct().all()
     list_of_store_ids = {sid[0] for sid in store_ids_query}
- 
-    # last_hour_uptime, last_hour_downtime = report_gen.get_last_hour_data(db, sid)
-    # last_hour_uptime, last_hour_downtime = report_gen.get_last_hour_data(db, sid := random.choice(list(list_of_store_ids)))
+    
+    # for sid in list_of_store_ids:
+    #     last_hour_uptime, last_hour_downtime = await report_gen.get_last_hour_data(db, sid)
+    #     last_day_uptime, last_day_downtime = await report_gen.get_last_day_data(db, sid)
+    
 
-    # last_day_uptime, last_day_downtime = report_gen.get_last_day_data(db, sid)
-    last_day_uptime, last_day_downtime = report_gen.get_last_day_data(db, sid := random.choice(list(list_of_store_ids)))
-
-    # return None
-    return {'store_id': sid, "uptime": last_day_uptime, "downtime": last_day_downtime}
+    return None
+    # return {'store_id': sid, "uptime": last_day_uptime, "downtime": last_day_downtime}
 
 
 
