@@ -18,23 +18,18 @@ router = APIRouter(
 )
 
 report_status = {}
-
+current_id = 
 
 @router.get("/trigger_report/{sid}")
 async def trigger_creation_of_report(sid: int, db: Session = Depends(get_db)):
     
-    
     store_ids_query = db.query(models.StoreStatus.store_id).distinct().all()
     list_of_store_ids = {sid[0] for sid in store_ids_query}
+
+    if sid in list_of_store_ids:
+        rg = ReportGen(sid, db)
+
     
-    i = 0
-    for ssid in list_of_store_ids:
-        rg = ReportGen(ssid, db)
-        last_hour_uptime, last_hour_downtime = await rg.get_last_hour_data()
-        last_day_uptime, last_day_downtime = await rg.get_last_day_data()
-        last_week_uptime, last_week_downtime = await rg.get_last_week_data()
-        print(f'ITERATION {i} DONE')
-        i += 1
 
     return None
     # return {
