@@ -11,6 +11,6 @@ app = FastAPI()
 app.include_router(report.router)
 
 
-@app.get("/")
-async def test():
-    return {"Hello": "World"}
+# @app.get("/")
+# async def test():
+#     return {"Hello": "World"}
