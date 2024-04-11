@@ -55,7 +55,7 @@
   - **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
 
 
- - ### For the last day calculations:
+- ### For the last day calculations:
   - Data within business hours of the store for that day is queried in order from earliest to latest and their necessary information is stored in a list.
 
   - The same logic for the hour calculations is applied to each 2 timestamps that are next to each other in the list (we queried in sorted fashion - earliest to latest) by passing their information into a calculation function; we will call them timestamp_1 and timestamp_2. Eg: The list is [1, 2, 3, 4, 5], first 1 and 2 are passed to the function then 2 and 3 then 3 and 4 and so on.
@@ -75,16 +75,16 @@
   - **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
 
 
-  - ### For the last week calculation:
-    - The latest date is taken as a reference.
-   
-    - Data from the latest date to 1 week ago is queried in ordered fashion, earliest to latest
-   
-    - Valid data from the query is added to the list which is of length 7. Each index of the list will have: an array of valid timestamps along with their status, local start time, local_end_time. The 0th index will have data from day 0 (Monday), 1st index will have data from day 1 (Tuesday) and so on.
-   
-    - The same logic for the last day calculations are applied to each day of timestamps and summed to get the final uptime and downtime for that week
-   
-    - **Edge Case:** Handled after each iteration to make sure the uptime + downtime for the hour is equal to 60 minutes
-    -  **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
+- ### For the last week calculation:
+  - The latest date is taken as a reference.
+ 
+  - Data from the latest date to 1 week ago is queried in ordered fashion, earliest to latest
+ 
+  - Valid data from the query is added to the list which is of length 7. Each index of the list will have: an array of valid timestamps along with their status, local start time, local_end_time. The 0th index will have data from day 0 (Monday), 1st index will have data from day 1 (Tuesday) and so on.
+ 
+  - The same logic for the last day calculations are applied to each day of timestamps and summed to get the final uptime and downtime for that week
+ 
+  - **Edge Case:** Handled after each iteration to make sure the uptime + downtime for the hour is equal to 60 minutes
+  -  **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
 
 
