@@ -67,16 +67,6 @@ def calculate_uptime_downtime(start_hour, start_minute, end_hour, end_minute,
     return uptime, downtime
 
 
-    
-
-
-
-
-# def check_if_in_timezone(timestamp, current_timezone, target_timezone, start_time, end_time):
-#     converted_time = convert_timestamp_timezone(timestamp, current_timezone, target_timezone)
-
-#     return start_time <= str(converted_time) <= end_time
-
 
 
 def get_day_from_date(date):
