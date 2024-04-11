@@ -205,7 +205,7 @@ class ReportGen:
         elif end_hour - start_hour == 23:
             return int(uptime/60), int(downtime + int(( 24 - (uptime + downtime)/60 )*60)) / 60
         else:
-            return int(uptime/60), int(downtime + int(( (end_hour - start_hour) - (uptime + downtime)/60 )*60)) /60
+            return int(uptime/60), int(int(downtime + int(( (end_hour - start_hour) - (uptime + downtime)/60 )*60)) /60)
     
 
     def get_last_week_data(self):
