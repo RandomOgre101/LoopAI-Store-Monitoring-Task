@@ -73,7 +73,7 @@
 
   - **Edge Case:** Handled after each iteration to make sure the uptime + downtime for the hour is equal to 60 minutes
   - **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
-  - **Edge Case:**: Two consecutive timestamps might have the same data for an hour, handled as explained above
+  - **Edge Case:**: Two consecutive timestamps might have the same hour in timestamp, handled as explained above
 
 
 - ### For the last week calculation:
@@ -87,6 +87,4 @@
  
   - **Edge Case:** Handled after each iteration to make sure the uptime + downtime for the hour is equal to 60 minutes
   - **Edge Case:** Store might not have business hours for a particular day or days, which we have assumed to be closed and not part of calculations. In that case, it is skipped.
-  - **Edge Case:**: Two consecutive timestamps might have the same data for an hour, handled as explained above
-
-
+  - **Edge Case:**: Two consecutive timestamps might have the same hour in timestamp, handled as explained above
