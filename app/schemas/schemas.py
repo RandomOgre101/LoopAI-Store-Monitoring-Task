@@ -6,3 +6,6 @@ from typing_extensions import Annotated
 
 class TriggerReport(BaseModel):
     sid: int
+
+class ReportIdOut(BaseModel):
+    report_id: int

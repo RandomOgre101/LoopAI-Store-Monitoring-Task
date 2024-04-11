@@ -19,7 +19,7 @@ class ReportGen:
         return [{c.name: getattr(obj, c.name) for c in obj.__table__.columns} for obj in objects] if type(objects) == list else {c.name: getattr(objects, c.name) for c in objects.__table__.columns}
 
 
-    async def get_last_hour_data(self):
+    def get_last_hour_data(self):
         i: int = 0
 
         latest_time_query: list = self.db.query(models.StoreStatus).\
@@ -64,67 +64,79 @@ class ReportGen:
         uptime: int = 0
         downtime: int = 0
 
-        if (prev_hour_data and 
-            prev_hour_data[0].split(":")[1] < hour_data[0].split(":")[1]
-            ):
+        # if (prev_hour_data and 
+        #     prev_hour_data[0].split(":")[1] < hour_data[0].split(":")[1]
+        #     ):
 
-            hour_min: int = int(hour_data[0].split(":")[1])
-            prev_min: int = int(prev_hour_data[0].split(":")[1])
+        #     hour_min: int = int(hour_data[0].split(":")[1])
+        #     prev_min: int = int(prev_hour_data[0].split(":")[1])
 
-            if (prev_hour_data[1] == 'active' and
-                hour_data[1] == 'active'
-                ):
-                uptime += 60
+        #     if (prev_hour_data[1] == 'active' and
+        #         hour_data[1] == 'active'
+        #         ):
+        #         uptime += 60
             
-            elif (prev_hour_data[1] == 'active' and
-                hour_data[1] == 'inactive'
-                ):         
-                uptime += 60
+        #     elif (prev_hour_data[1] == 'active' and
+        #         hour_data[1] == 'inactive'
+        #         ):         
+        #         uptime += 60
             
-            elif (prev_hour_data[1] == 'inactive' and
-                hour_data[1] == 'active'
-                ):
-                downtime += 60
+        #     elif (prev_hour_data[1] == 'inactive' and
+        #         hour_data[1] == 'active'
+        #         ):
+        #         downtime += 60
             
-            elif (prev_hour_data[1] == 'inactive' and
-                hour_data[1] == 'inactive'):
-                downtime += 60
+        #     elif (prev_hour_data[1] == 'inactive' and
+        #         hour_data[1] == 'inactive'):
+        #         downtime += 60
         
 
-        elif (prev_hour_data and 
-            prev_hour_data[0].split(":")[1] >= hour_data[0].split(":")[1]
-            ):
-            hour_min: int = int(hour_data[0].split(":")[1])
-            prev_min: int = int(prev_hour_data[0].split(":")[1])
+        # elif (prev_hour_data and 
+        #     prev_hour_data[0].split(":")[1] >= hour_data[0].split(":")[1]
+        #     ):
+        #     hour_min: int = int(hour_data[0].split(":")[1])
+        #     prev_min: int = int(prev_hour_data[0].split(":")[1])
 
-            if (prev_hour_data[1] == 'active' and
-                hour_data[1] == 'active'
-                ):
-                uptime += 60
+        #     if (prev_hour_data[1] == 'active' and
+        #         hour_data[1] == 'active'
+        #         ):
+        #         uptime += 60
             
-            elif (prev_hour_data[1] == 'active' and
-                hour_data[1] == 'inactive'
-                ):         
-                uptime += 60 - (prev_min - hour_min)
-                downtime += 60 - uptime
+        #     elif (prev_hour_data[1] == 'active' and
+        #         hour_data[1] == 'inactive'
+        #         ):         
+        #         uptime += 60 - (prev_min - hour_min)
+        #         downtime += 60 - uptime
             
-            elif (prev_hour_data[1] == 'inactive' and
-                hour_data[1] == 'active'
-                ):
-                downtime += 60
+        #     elif (prev_hour_data[1] == 'inactive' and
+        #         hour_data[1] == 'active'
+        #         ):
+        #         downtime += 60
             
-            elif (prev_hour_data[1] == 'inactive' and
-                hour_data[1] == 'inactive'):
-                downtime += 60
+        #     elif (prev_hour_data[1] == 'inactive' and
+        #         hour_data[1] == 'inactive'):
+        #         downtime += 60
         
-
-        elif prev_hour_data is None:
+        if prev_hour_data is None:
             downtime += 60
+        else:
+            hour_1 = int(prev_hour_data[0].split(":")[0])
+            hour_2 = int(hour_data[0].split(":")[0])
+
+            minute_1 = int(prev_hour_data[0].split(":")[1])
+            minute_2 = int(hour_data[0].split(":")[1])
+
+            status_1 = prev_hour_data[1]
+            status_2 = hour_data[1]
+
+            up, dwn = tdc.calculate_uptime_downtime(None, None, None, None, hour_1, hour_2, minute_1, minute_2, status_1, status_2, False)
+            uptime += up
+            downtime += dwn
 
         return uptime, downtime
 
 
-    async def get_last_day_data(self):
+    def get_last_day_data(self):
 
         latest_date_query = self.db.query(func.max(models.StoreStatus.timestamp_utc)).\
                             filter(models.StoreStatus.store_id == self.sid).first()[0]
@@ -196,7 +208,7 @@ class ReportGen:
             return int(uptime/60), int(downtime + int(( (end_hour - start_hour) - (uptime + downtime)/60 )*60)) /60
     
 
-    async def get_last_week_data(self):
+    def get_last_week_data(self):
 
         latest_date_query = self.db.query(func.max(models.StoreStatus.timestamp_utc)).\
                             filter(models.StoreStatus.store_id == self.sid).first()[0]
@@ -328,5 +340,4 @@ class ReportGen:
 
         return int(final_uptime/60), int(final_downtime/60)
         
-
-
+    
