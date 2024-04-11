@@ -1,7 +1,5 @@
-from pydantic import BaseModel, EmailStr, Field
-from datetime import datetime
-from typing import Optional
-from typing_extensions import Annotated
+from pydantic import BaseModel
+
 
 
 class TriggerReport(BaseModel):
